@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.Assert._;
 
 import org.monadscala.State._;
-import org.monadscala._;
 
 class StateTest {
   @Test
@@ -17,12 +16,18 @@ class StateTest {
     val monad: Monad[StatePartial[NatGen]#Type] = Monad[StatePartial[NatGen]#Type];
     import monad._;
 
-    val state = for {
+    val state0: State[NatGen, Int] = for {
       s0 <- get[NatGen]
       (v0, s1) = nextNat(s0)
       _ <- put(s1)
     } yield v0;
 
-    assertEquals(0, evalState(state, NatGen(0)));
+    val state1: State[NatGen, Int] = for {
+      v0 <- state0
+      v1 <- state(nextNat)
+    } yield v1;
+
+    assertEquals(0, evalState(state0, NatGen(0)));
+    assertEquals(1, evalState(state1, NatGen(0)));
   }
 }
