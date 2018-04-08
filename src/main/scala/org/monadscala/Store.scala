@@ -1,13 +1,14 @@
 package org.monadscala
 
+import scala.language.higherKinds;
 import scala.language.implicitConversions;
+
+import org.monadscala.Typelevel._;
 
 sealed case class Store[S, A](runStore: (S => A, S))
 
 object Store {
-  type StorePartial[S] = { type Type[A] = Store[S, A] }
-
-  private final class StoreSingleton[S] extends Comonad[StorePartial[S]#Type] {
+  private final class StoreSingleton[S] extends Comonad[Currying[Store, S]#Type] {
     override final def fmap[A, B](fab: A => B, fa: Store[S, A]): Store[S, B] = fa match {
       case Store((f, s)) => Store(fab.compose(f), s)
     };
@@ -21,7 +22,7 @@ object Store {
     };
   }
 
-  implicit def singleton[S]: Comonad[StorePartial[S]#Type] = new StoreSingleton[S]();
+  implicit def singleton[S]: Comonad[Currying[Store, S]#Type] = new StoreSingleton[S]();
 
   def store[S, A](f: S => A, s: S): Store[S, A] = Store(f, s);
 

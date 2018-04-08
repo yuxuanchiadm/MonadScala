@@ -1,13 +1,13 @@
 package org.monadscala
 
+import org.monadscala.Typelevel._;
+
 import scala.language.implicitConversions;
 
 sealed case class State[S, A](runState: S => (A, S))
 
 object State {
-  type StatePartial[S] = { type Type[A] = State[S, A] }
-
-  private final class StateSingleton[S] extends Monad[StatePartial[S]#Type] {
+  private final class StateSingleton[S] extends Monad[Currying[State, S]#Type] {
     override final def unit[A](a: A): State[S, A] = State(s => (a, s));
 
     override final def compose[A, B](ma: State[S, A], famb: A => State[S, B]): State[S, B] = State(s0 => {
@@ -16,9 +16,9 @@ object State {
     });
   }
 
-  implicit def singleton[S]: Monad[StatePartial[S]#Type] = new StateSingleton[S]();
+  implicit def singleton[S]: Monad[Currying[State, S]#Type] = new StateSingleton[S]();
 
-  implicit def forNotation[S, A](ma: State[S, A]) = Monad.forNotation[StatePartial[S]#Type, A](singleton, ma);
+  implicit def forNotation[S, A](ma: State[S, A]) = Monad.forNotation[Currying[State, S]#Type, A](singleton, ma);
 
   def put[S](newState: S): State[S, Unit] = State(s => ((), newState));
 
