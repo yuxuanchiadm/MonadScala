@@ -13,7 +13,7 @@ object Option {
     override final def mplus[A](a1: Option[A], a2: Option[A]): Option[A] = a1.orElse(a2)
   }
 
-  private final class OptionSingleton1[A](constraint0: Semigroup[A]) extends Monoid[Option[A]] {
+  private final class OptionSingleton1[A](implicit constraint0: Semigroup[A]) extends Monoid[Option[A]] {
     override final def mempty(): Option[A] = None
 
     override final def mappend(a1: Option[A], a2: Option[A]): Option[A] = (a1, a2) match {
@@ -25,7 +25,7 @@ object Option {
 
   implicit def optionSingleton0: MonadPlus[Option] = new OptionSingleton0()
 
-  implicit def optionSingleton1[A](implicit constraint0: Semigroup[A]): Monoid[Option[A]] = new OptionSingleton1[A](constraint0)
+  implicit def optionSingleton1[A](implicit constraint0: Semigroup[A]): Monoid[Option[A]] = new OptionSingleton1[A]()
 
   implicit def optionForNotation[A](ma: Option[A]) = Monad.forNotation[Option, A](ma)
 
