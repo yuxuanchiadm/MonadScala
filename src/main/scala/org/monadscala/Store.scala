@@ -8,45 +8,28 @@ import org.monadscala.Typelevel._
 sealed case class Store[S, A](runStore: (S => A, S))
 
 object Store {
-  private final class StoreSingleton[S] extends Comonad[Currying[Store, S]#Type] {
-    override final def fmap[A, B](fab: A => B, fa: Store[S, A]): Store[S, B] = fa match {
-      case Store((f, s)) => Store(fab.compose(f), s)
-    }
+  private final class StoreSingleton0[S] extends Comonad[Currying[Store, S]#Type] {
+    override final def extract[A](wa: Store[S, A]): A = wa.runStore match { case (f, s) => f(s) }
 
-    override final def extract[A](wa: Store[S, A]): A = wa match {
-      case Store((f, s)) => f(s)
-    }
-
-    override final def duplicate[A](wa: Store[S, A]): Store[S, Store[S, A]] = wa match {
-      case Store((f, s)) => Store((s1) => Store(f, s1), s)
+    override final def extend[A, B](fawb: Store[S, A] => B, wa: Store[S, A]): Store[S, B] = wa.runStore match {
+      case (f, s0) => Store((s1 => fawb(Store((wa.runStore._1, s1))), s0))
     }
   }
 
-  implicit def singleton[S]: Comonad[Currying[Store, S]#Type] = new StoreSingleton[S]()
+  implicit def storeSingleton0[S]: Comonad[Currying[Store, S]#Type] = new StoreSingleton0[S]()
 
-  def store[S, A](f: S => A, s: S): Store[S, A] = Store(f, s)
+  def store[S, A](f: S => A, s: S): Store[S, A] = Store((f, s))
 
-  def pos[S, A](wa: Store[S, A]): S = wa match {
-    case Store((_, s)) => s
-  }
+  def pos[S, A](wa: Store[S, A]): S = wa.runStore._2
 
-  def peek[S, A](s: S, wa: Store[S, A]): A = wa match {
-    case Store((f, _)) => f(s)
-  }
+  def peek[S, A](s: S, wa: Store[S, A]): A = wa.runStore._1(s)
 
-  def peeks[S, A](fss: S => S, wa: Store[S, A]): A = wa match {
-    case Store((f, s)) => f(fss(s))
-  }
+  def peeks[S, A](fss: S => S, wa: Store[S, A]): A = wa.runStore match { case (f, s) => f(fss(s)) }
 
-  def seek[S, A](s: S, wa: Store[S, A]): Store[S, A] = wa match {
-    case Store((f, _)) => Store(f, s)
-  }
+  def seek[S, A](s: S, wa: Store[S, A]): Store[S, A] = Store((wa.runStore._1, s))
 
-  def seeks[S, A](fss: S => S, wa: Store[S, A]): Store[S, A] = wa match {
-    case Store((f, s)) => Store(f, fss(s))
-  }
+  def seeks[S, A](fss: S => S, wa: Store[S, A]): Store[S, A] = wa.runStore match { case (f, s) => Store((f, fss(s))) }
 
-  def experiment[F[_], S, A](fsfs: S => F[S], wa: Store[S, A])(implicit constraint0: Functor[F]): F[A] = wa match {
-    case Store((f, s)) => constraint0.fmap(f, fsfs(s))
-  }
+  def experiment[F[_], S, A](fsfs: S => F[S], wa: Store[S, A])(implicit constraint0: Functor[F]): F[A] =
+    wa.runStore match { case (f, s) => constraint0.fmap(f, fsfs(s)) }
 }

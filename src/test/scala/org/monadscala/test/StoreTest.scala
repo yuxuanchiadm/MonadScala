@@ -1,8 +1,10 @@
-package org.monadscala
+package org.monadscala.test
 
 import org.junit.Test
 import org.junit.Assert._
 
+import org.monadscala._
+import org.monadscala.Option._
 import org.monadscala.Store._
 import org.monadscala.Typelevel._
 
@@ -14,12 +16,13 @@ class StoreTest {
 
     val theStore: Store[Int, String] = store((i) => i.toString(), 0)
     assertEquals("0", extract(theStore))
+    assertEquals("S1", peek(1, extend((wa: Store[Int, String]) => "S" + extract(wa), theStore)))
     assertEquals(0, pos(theStore))
     assertEquals("1", peek(1, theStore))
     assertEquals("1", peeks((i: Int) => i + 1, theStore))
     assertEquals("1", extract(seek(1, theStore)))
     assertEquals("1", extract(seeks((i: Int) => i + 1, theStore)))
-    assertEquals(Maybe.just("0"), experiment((i: Int) => Maybe.just(i), theStore)(Monad[Maybe]))
-    assertEquals(Maybe.empty(), experiment(Function.const(Maybe.empty[Int]()), theStore)(Monad[Maybe]))
+    assertEquals(some("0"), experiment((i: Int) => some(i), theStore)(Monad[Option]))
+    assertEquals(none, experiment(Function.const(none), theStore)(Monad[Option]))
   }
 }

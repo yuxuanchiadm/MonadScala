@@ -1,8 +1,9 @@
-package org.monadscala
+package org.monadscala.test
 
 import org.junit.Test
 import org.junit.Assert._
 
+import org.monadscala._
 import org.monadscala.Either._
 import org.monadscala.Typelevel._
 

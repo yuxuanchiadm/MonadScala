@@ -5,7 +5,7 @@ import org.monadscala.Typelevel._
 import scala.language.implicitConversions
 
 object Either {
-  private final class EitherSingleton[E] extends Monad[Currying[Either, E]#Type] {
+  private final class EitherSingleton0[E] extends Monad[Currying[Either, E]#Type] {
     override final def unit[A](a: A): Either[E, A] = Right(a)
 
     override final def compose[A, B](ma: Either[E, A], famb: A => Either[E, B]): Either[E, B] = ma match {
@@ -14,7 +14,7 @@ object Either {
     }
   }
 
-  implicit def singleton[E]: Monad[Currying[Either, E]#Type] = new EitherSingleton[E]()
+  implicit def eitherSingleton0[E]: Monad[Currying[Either, E]#Type] = new EitherSingleton0[E]()
 
-  implicit def forNotation[E, A](ma: Either[E, A]) = Monad.forNotation[Currying[Either, E]#Type, A](singleton, ma)
+  implicit def eitherForNotation[E, A](ma: Either[E, A]) = Monad.forNotation[Currying[Either, E]#Type, A](ma)
 }

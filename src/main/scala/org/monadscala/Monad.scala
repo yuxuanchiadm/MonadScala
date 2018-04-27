@@ -25,10 +25,10 @@ trait Monad[F[_]] extends Applicative[F] {
 object Monad {
   def apply[F[_]](implicit m: Monad[F]): Monad[F] = m
 
-  def forNotation[F[_], A](monad: Monad[F], ma: F[A]): ForNotation[F, A] = new ForNotation[F, A] {
-    override def flatMap[B](famb: A => F[B]): F[B] = monad.compose(ma, famb)
+  def forNotation[F[_], A](ma: F[A])(implicit m: Monad[F]): ForNotation[F, A] = new ForNotation[F, A] {
+    override def flatMap[B](famb: A => F[B]): F[B] = m.compose(ma, famb)
 
-    override def map[B](fab: A => B): F[B] = monad.compose(ma, (a: A) => monad.unit(fab(a)))
+    override def map[B](fab: A => B): F[B] = m.compose(ma, (a: A) => m.unit(fab(a)))
   }
 
   sealed trait ForNotation[F[_], A] {

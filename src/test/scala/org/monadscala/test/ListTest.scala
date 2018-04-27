@@ -1,9 +1,10 @@
-package org.monadscala
+package org.monadscala.test
 
 import org.junit.Test
 import org.junit.Assert._
 
-import org.monadscala.Lists._
+import org.monadscala._
+import org.monadscala.List._
 
 class ListTest {
   @Test

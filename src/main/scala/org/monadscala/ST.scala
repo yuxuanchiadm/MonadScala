@@ -13,18 +13,17 @@ object ST {
 
   private class STWorld[S] extends StateWorld[S]
 
-  private final class STMonad[S] extends Monad[Currying[ST, S]#Type] {
+  private final class STSingleton0[S] extends Monad[Currying[ST, S]#Type] {
     override final def unit[A](a: A): ST[S, A] = ST(s => (s, a))
 
     override final def compose[A, B](ma: ST[S, A], famb: A => ST[S, B]): ST[S, B] = ST(s0 => {
-      val (s1, a) = ma.f(s0)
-      famb(a).f(s1)
+      ma.f(s0) match { case (s1, a) => famb(a).f(s1) }
     })
   }
 
-  implicit def singleton[S]: Monad[Currying[ST, S]#Type] = new STMonad[S]()
+  implicit def stSingleton0[S]: Monad[Currying[ST, S]#Type] = new STSingleton0[S]()
 
-  implicit def forNotation[S, A](ma: ST[S, A]) = Monad.forNotation[Currying[ST, S]#Type, A](singleton, ma)
+  implicit def stForNotation[S, A](ma: ST[S, A]) = Monad.forNotation[Currying[ST, S]#Type, A](ma)
 
   def runST[A]: (ST[S, A] => A) forSome { type S } = (_: ST[_, A]).f(new STWorld())._2
 

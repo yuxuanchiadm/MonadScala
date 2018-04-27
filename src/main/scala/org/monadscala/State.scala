@@ -7,18 +7,17 @@ import scala.language.implicitConversions
 sealed case class State[S, A](runState: S => (A, S))
 
 object State {
-  private final class StateSingleton[S] extends Monad[Currying[State, S]#Type] {
+  private final class StateSingleton0[S] extends Monad[Currying[State, S]#Type] {
     override final def unit[A](a: A): State[S, A] = State(s => (a, s))
 
     override final def compose[A, B](ma: State[S, A], famb: A => State[S, B]): State[S, B] = State(s0 => {
-      val (a, s1) = ma.runState(s0)
-      famb(a).runState(s1)
+      ma.runState(s0) match { case (a, s1) => famb(a).runState(s1) }
     })
   }
 
-  implicit def singleton[S]: Monad[Currying[State, S]#Type] = new StateSingleton[S]()
+  implicit def stateSingleton0[S]: Monad[Currying[State, S]#Type] = new StateSingleton0[S]()
 
-  implicit def forNotation[S, A](ma: State[S, A]) = Monad.forNotation[Currying[State, S]#Type, A](singleton, ma)
+  implicit def stateForNotation[S, A](ma: State[S, A]) = Monad.forNotation[Currying[State, S]#Type, A](ma)
 
   def put[S](newState: S): State[S, Unit] = State(s => ((), newState))
 
