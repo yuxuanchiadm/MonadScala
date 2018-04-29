@@ -40,4 +40,13 @@ object Monad {
   def monadTrivialFunctorInstance[F[_]: Monad]: Functor[F] = new MonadTrivialFunctorInstance()
 
   def monadTrivialApplicativeInstance[F[_]: Monad]: Applicative[F] = new MonadTrivialApplicativeInstance()
+
+  def liftM[F[_]: Monad, A, B](fab: A => B, ma: F[A]): F[B] =
+    Monad[F].compose(ma, (a: A) => Monad[F].unit(fab(a)))
+
+  def liftM2[F[_]: Monad, A, B, C](fabc: A => B => C, ma: F[A], mb: F[B]): F[C] =
+    Monad[F].compose(ma, (a: A) => Monad[F].compose(mb, (b: B) => Monad[F].unit(fabc(a)(b))))
+
+  def liftM3[F[_]: Monad, A, B, C, D](fabc: A => B => C => D, ma: F[A], mb: F[B], mc: F[C]): F[D] =
+    Monad[F].compose(ma, (a: A) => Monad[F].compose(mb, (b: B) => Monad[F].compose(mc, (c: C) => Monad[F].unit(fabc(a)(b)(c)))))
 }

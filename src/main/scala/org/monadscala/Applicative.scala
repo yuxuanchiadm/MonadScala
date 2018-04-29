@@ -22,4 +22,13 @@ object Applicative {
   def apply[F[_]: Applicative]: Applicative[F] = implicitly[Applicative[F]]
 
   def applicativeTrivialFunctorInstance[F[_]: Applicative]: Functor[F] = new ApplicativeTrivialFunctorInstance()
+
+  def liftA[F[_]: Applicative, A, B](fab: A => B, fa: F[A]): F[B] =
+    Applicative[F].apply(Applicative[F].pure(fab), fa)
+
+  def liftA2[F[_]: Applicative, A, B, C](fabc: A => B => C, fa: F[A], fb: F[B]): F[C] =
+    Applicative[F].apply(Applicative[F].apply(Applicative[F].pure(fabc), fa), fb)
+
+  def liftA3[F[_]: Applicative, A, B, C, D](fabcd: A => B => C => D, fa: F[A], fb: F[B], fc: F[C]): F[D] =
+    Applicative[F].apply(Applicative[F].apply(Applicative[F].apply(Applicative[F].pure(fabcd), fa), fb), fc)
 }
