@@ -7,15 +7,19 @@ import scala.language.implicitConversions
 sealed case class Reader[R, A](runReader: R => A)
 
 object Reader {
-  private final class ReaderSingleton0[R] extends Monad[Currying[Reader, R]#Type] {
+  private final class ReaderTrivialMonadInstance[R] extends Monad[Currying[Reader, R]#Type] {
     override final def unit[A](a: A): Reader[R, A] = Reader(r => a)
 
     override final def compose[A, B](ma: Reader[R, A], famb: A => Reader[R, B]): Reader[R, B] = Reader(r => (famb(ma.runReader(r))).runReader(r))
   }
 
-  implicit def ReaderSingleton0[R]: Monad[Currying[Reader, R]#Type] = new ReaderSingleton0[R]()
+  implicit def readerTrivialFunctorInstance[R]: Functor[Currying[Reader, R]#Type] = Monad.monadTrivialFunctorInstance[Currying[Reader, R]#Type]
 
-  implicit def ReaderForNotation[R, A](ma: Reader[R, A]) = Monad.forNotation[Currying[Reader, R]#Type, A](ma)
+  implicit def readerTrivialApplicativeInstance[R]: Applicative[Currying[Reader, R]#Type] = Monad.monadTrivialApplicativeInstance[Currying[Reader, R]#Type]
+
+  implicit def readerTrivialMonadInstance[R]: Monad[Currying[Reader, R]#Type] = new ReaderTrivialMonadInstance[R]()
+
+  implicit def readerForNotation[R, A](ma: Reader[R, A]) = Monad.forNotation[Currying[Reader, R]#Type, A](ma)
 
   def ask[R](): Reader[R, R] = Reader(r => r)
 

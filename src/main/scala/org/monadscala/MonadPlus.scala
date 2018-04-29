@@ -2,10 +2,8 @@ package org.monadscala
 
 import scala.language.higherKinds
 
-trait MonadPlus[F[_]] extends Alternative[F] with Monad[F] {
-  override def empty[A](): F[A] = mzero()
-
-  override def combine[A](a1: F[A], a2: F[A]): F[A] = mplus(a1, a2)
+abstract class MonadPlus[F[_]: Monad] {
+  def monadInstance(): Monad[F] = Monad[F]
 
   def mzero[A](): F[A]
 
@@ -13,5 +11,13 @@ trait MonadPlus[F[_]] extends Alternative[F] with Monad[F] {
 }
 
 object MonadPlus {
-  def apply[F[_]](implicit f: MonadPlus[F]): MonadPlus[F] = f
+  private final class MonadPlusTrivialAlternativeInstance[F[_]: MonadPlus] extends Alternative[F]()(Monad.monadTrivialApplicativeInstance(MonadPlus[F].monadInstance())) {
+    override def empty[A](): F[A] = MonadPlus[F].mzero()
+
+    override def combine[A](a1: F[A], a2: F[A]): F[A] = MonadPlus[F].mplus(a1, a2)
+  }
+
+  def apply[F[_]: MonadPlus]: MonadPlus[F] = implicitly[MonadPlus[F]]
+
+  def monadPlusTrivialAlternativeInstance[F[_]: MonadPlus]: Alternative[F] = new MonadPlusTrivialAlternativeInstance()
 }

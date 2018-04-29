@@ -2,16 +2,22 @@ package org.monadscala
 
 import scala.language.higherKinds
 
-trait Comonad[F[_]] extends Functor[F] {
-  override def fmap[A, B](fab: A => B, fa: F[A]): F[B] = extend((wa: F[A]) => fab(extract(wa)), fa)
-
+abstract class Comonad[F[_]] {
   def extract[A](wa: F[A]): A
 
-  def extend[A, B](fawb: F[A] => B, wa: F[A]): F[B]
+  def extend[A, B](fwab: F[A] => B, wa: F[A]): F[B]
 
   def duplicate[A](wa: F[A]): F[F[A]] = extend(identity[F[A]], wa)
 }
 
 object Comonad {
-  def apply[F[_]](implicit f: Comonad[F]): Comonad[F] = f
+  private final class ComonadTrivialFunctorInstance[F[_]: Comonad] extends Functor[F] {
+    override def fmap[A, B](fab: A => B, fa: F[A]): F[B] = Comonad[F].extend((wa: F[A]) => fab(Comonad[F].extract(wa)), fa)
+
+    override def replace[A, B](a: A, fb: F[B]): F[A] = Comonad[F].extend(Function.const(a)(_: F[B]), fb)
+  }
+
+  def apply[F[_]: Comonad]: Comonad[F] = implicitly[Comonad[F]]
+
+  def comonadTrivialFunctorInstance[F[_]: Comonad]: Functor[F] = new ComonadTrivialFunctorInstance()
 }

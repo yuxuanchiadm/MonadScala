@@ -1,11 +1,15 @@
 package org.monadscala
 
-trait Semigroup[A] extends Magma[A] {
-  override def op(a1: A, a2: A): A = assoc(a1, a2)
-
+abstract class Semigroup[A] {
   def assoc(a1: A, a2: A): A
 }
 
 object Semigroup {
-  def apply[A](implicit m: Semigroup[A]): Semigroup[A] = m
+  private final class SemigroupTrivialMagmaInstance[A: Semigroup] extends Magma[A] {
+    override def op(a1: A, a2: A): A = Semigroup[A].assoc(a1, a2)
+  }
+
+  def apply[A: Semigroup]: Semigroup[A] = implicitly[Semigroup[A]]
+
+  def semigroupTrivialMagmaInstance[A: Semigroup]: Magma[A] = new SemigroupTrivialMagmaInstance()
 }

@@ -22,7 +22,7 @@ class StoreTest {
     assertEquals("1", peeks((i: Int) => i + 1, theStore))
     assertEquals("1", extract(seek(1, theStore)))
     assertEquals("1", extract(seeks((i: Int) => i + 1, theStore)))
-    assertEquals(some("0"), experiment((i: Int) => some(i), theStore)(Monad[Option]))
-    assertEquals(none, experiment(Function.const(none), theStore)(Monad[Option]))
+    assertEquals(some("0"), experiment((i: Int) => some(i), theStore)(Functor[Option]))
+    assertEquals(none, experiment(Function.const(none), theStore)(Functor[Option]))
   }
 }

@@ -1,10 +1,6 @@
 package org.monadscala
 
-trait Monoid[A] extends Semigroup[A] {
-  override def op(a1: A, a2: A): A = mappend(a1, a2)
-
-  override def assoc(a1: A, a2: A): A = mappend(a1, a2)
-
+abstract class Monoid[A] {
   def mempty(): A
 
   def mappend(a1: A, a2: A): A
@@ -13,5 +9,17 @@ trait Monoid[A] extends Semigroup[A] {
 }
 
 object Monoid {
-  def apply[A](implicit m: Monoid[A]): Monoid[A] = m
+  private final class MonoidTrivialMagmaInstance[A: Monoid] extends Magma[A] {
+    override def op(a1: A, a2: A): A = Monoid[A].mappend(a1, a2)
+  }
+
+  private final class MonoidTrivialSemigroupInstance[A: Monoid] extends Semigroup[A] {
+    override def assoc(a1: A, a2: A): A = Monoid[A].mappend(a1, a2)
+  }
+
+  def apply[A: Monoid]: Monoid[A] = implicitly[Monoid[A]]
+
+  def monoidTrivialMagmaInstance[A: Monoid]: Magma[A] = new MonoidTrivialMagmaInstance()
+
+  def monoidTrivialSemigroupInstance[A: Monoid]: Semigroup[A] = new MonoidTrivialSemigroupInstance()
 }

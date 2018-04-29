@@ -8,15 +8,17 @@ import org.monadscala.Typelevel._
 sealed case class Store[S, A](runStore: (S => A, S))
 
 object Store {
-  private final class StoreSingleton0[S] extends Comonad[Currying[Store, S]#Type] {
+  private final class StoreTrivialComonadInstance[S] extends Comonad[Currying[Store, S]#Type] {
     override final def extract[A](wa: Store[S, A]): A = wa.runStore match { case (f, s) => f(s) }
 
-    override final def extend[A, B](fawb: Store[S, A] => B, wa: Store[S, A]): Store[S, B] = wa.runStore match {
-      case (f, s0) => Store((s1 => fawb(Store((wa.runStore._1, s1))), s0))
+    override final def extend[A, B](fwab: Store[S, A] => B, wa: Store[S, A]): Store[S, B] = wa.runStore match {
+      case (f, s0) => Store((s1 => fwab(Store((wa.runStore._1, s1))), s0))
     }
   }
 
-  implicit def storeSingleton0[S]: Comonad[Currying[Store, S]#Type] = new StoreSingleton0[S]()
+  implicit def storeTrivialFunctorInstance[S]: Functor[Currying[Store, S]#Type] = Comonad.comonadTrivialFunctorInstance[Currying[Store, S]#Type]
+
+  implicit def storeTrivialComonadInstance[S]: Comonad[Currying[Store, S]#Type] = new StoreTrivialComonadInstance[S]()
 
   def store[S, A](f: S => A, s: S): Store[S, A] = Store((f, s))
 
@@ -30,6 +32,6 @@ object Store {
 
   def seeks[S, A](fss: S => S, wa: Store[S, A]): Store[S, A] = wa.runStore match { case (f, s) => Store((f, fss(s))) }
 
-  def experiment[F[_], S, A](fsfs: S => F[S], wa: Store[S, A])(implicit constraint0: Functor[F]): F[A] =
-    wa.runStore match { case (f, s) => constraint0.fmap(f, fsfs(s)) }
+  def experiment[F[_]: Functor, S, A](fsfs: S => F[S], wa: Store[S, A]): F[A] =
+    wa.runStore match { case (f, s) => implicitly[Functor[F]].fmap(f, fsfs(s)) }
 }

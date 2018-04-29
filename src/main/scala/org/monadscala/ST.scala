@@ -13,7 +13,7 @@ object ST {
 
   private class STWorld[S] extends StateWorld[S]
 
-  private final class STSingleton0[S] extends Monad[Currying[ST, S]#Type] {
+  private final class STTrivialMonadInstance[S] extends Monad[Currying[ST, S]#Type] {
     override final def unit[A](a: A): ST[S, A] = ST(s => (s, a))
 
     override final def compose[A, B](ma: ST[S, A], famb: A => ST[S, B]): ST[S, B] = ST(s0 => {
@@ -21,7 +21,11 @@ object ST {
     })
   }
 
-  implicit def stSingleton0[S]: Monad[Currying[ST, S]#Type] = new STSingleton0[S]()
+  implicit def stTrivialFunctorInstance[S]: Functor[Currying[ST, S]#Type] = Monad.monadTrivialFunctorInstance[Currying[ST, S]#Type]
+
+  implicit def stTrivialApplicativeInstance[S]: Applicative[Currying[ST, S]#Type] = Monad.monadTrivialApplicativeInstance[Currying[ST, S]#Type]
+
+  implicit def stTrivialMonadInstance[S]: Monad[Currying[ST, S]#Type] = new STTrivialMonadInstance[S]()
 
   implicit def stForNotation[S, A](ma: ST[S, A]) = Monad.forNotation[Currying[ST, S]#Type, A](ma)
 

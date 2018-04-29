@@ -9,10 +9,10 @@ import org.monadscala.List._
 class ListTest {
   @Test
   def testBasic: Unit = {
-    val alternative: Alternative[List] = Alternative[List]
-    import alternative._
+    val monadPlus: MonadPlus[List] = MonadPlus[List]
+    import monadPlus._
 
-    val list: List[String] = combine(combine(List("a", "b"), List("c", "d")), empty)
+    val list: List[String] = mplus(mplus(List("a", "b"), List("c", "d")), mzero)
     assertEquals(4, list.length)
   }
 }
