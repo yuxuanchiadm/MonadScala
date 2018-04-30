@@ -3,12 +3,12 @@ package org.monadscala
 import scala.language.higherKinds
 import scala.language.implicitConversions
 
-import org.monadscala.Typelevel._
-
 sealed case class Store[S, A](runStore: (S => A, S))
 
 object Store {
-  private final class StoreTrivialComonadInstance[S] extends Comonad[Currying[Store, S]#Type] {
+  type Store$1[S] = { type Type[A] = Store[S, A] }
+
+  private final class StoreTrivialComonadInstance[S] extends Comonad[Store$1[S]#Type] {
     override final def extract[A](wa: Store[S, A]): A = wa.runStore match { case (f, s) => f(s) }
 
     override final def extend[A, B](fwab: Store[S, A] => B, wa: Store[S, A]): Store[S, B] = wa.runStore match {
@@ -16,9 +16,9 @@ object Store {
     }
   }
 
-  implicit def storeTrivialFunctorInstance[S]: Functor[Currying[Store, S]#Type] = Comonad.comonadTrivialFunctorInstance[Currying[Store, S]#Type]
+  implicit def storeTrivialFunctorInstance[S]: Functor[Store$1[S]#Type] = Comonad.comonadTrivialFunctorInstance[Store$1[S]#Type]
 
-  implicit def storeTrivialComonadInstance[S]: Comonad[Currying[Store, S]#Type] = new StoreTrivialComonadInstance[S]()
+  implicit def storeTrivialComonadInstance[S]: Comonad[Store$1[S]#Type] = new StoreTrivialComonadInstance[S]()
 
   def store[S, A](f: S => A, s: S): Store[S, A] = Store((f, s))
 

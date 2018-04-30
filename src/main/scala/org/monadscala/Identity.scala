@@ -10,6 +10,7 @@ object Identity {
 
     override final def compose[A, B](ma: Identity[A], famb: A => Identity[B]): Identity[B] = famb(ma.runIdentity)
   }
+
   private final class IdentityTrivialComonadInstance extends Comonad[Identity] {
     override final def extract[A](wa: Identity[A]): A = wa.runIdentity
 

@@ -5,7 +5,6 @@ import org.junit.Assert._
 
 import org.monadscala._
 import org.monadscala.ST._
-import org.monadscala.Typelevel._
 
 class STTest {
   @Test

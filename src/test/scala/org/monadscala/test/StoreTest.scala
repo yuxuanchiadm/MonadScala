@@ -6,12 +6,11 @@ import org.junit.Assert._
 import org.monadscala._
 import org.monadscala.Option._
 import org.monadscala.Store._
-import org.monadscala.Typelevel._
 
 class StoreTest {
   @Test
   def testBasic: Unit = {
-    val comonad: Comonad[Currying[Store, Int]#Type] = Comonad[Currying[Store, Int]#Type]
+    val comonad: Comonad[Store$1[Int]#Type] = Comonad[Store$1[Int]#Type]
     import comonad._
 
     val theStore: Store[Int, String] = store((i) => i.toString(), 0)

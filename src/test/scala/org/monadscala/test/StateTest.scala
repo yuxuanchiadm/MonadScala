@@ -5,7 +5,6 @@ import org.junit.Assert._
 
 import org.monadscala._
 import org.monadscala.State._
-import org.monadscala.Typelevel._
 
 class StateTest {
   @Test
@@ -15,7 +14,7 @@ class StateTest {
     }
     def nextNat(natGen: NatGen): (Int, NatGen) = natGen.apply
 
-    val monad: Monad[Currying[State, NatGen]#Type] = Monad[Currying[State, NatGen]#Type]
+    val monad: Monad[State$1[NatGen]#Type] = Monad[State$1[NatGen]#Type]
     import monad._
 
     val state0: State[NatGen, Int] = for {

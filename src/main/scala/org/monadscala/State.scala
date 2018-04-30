@@ -1,13 +1,13 @@
 package org.monadscala
 
-import org.monadscala.Typelevel._
-
 import scala.language.implicitConversions
 
 sealed case class State[S, A](runState: S => (A, S))
 
 object State {
-  private final class StateTrivialMonadInstance[S] extends Monad[Currying[State, S]#Type] {
+  type State$1[S] = { type Type[A] = State[S, A] }
+
+  private final class StateTrivialMonadInstance[S] extends Monad[State$1[S]#Type] {
     override final def unit[A](a: A): State[S, A] = State(s => (a, s))
 
     override final def compose[A, B](ma: State[S, A], famb: A => State[S, B]): State[S, B] = State(s0 => {
@@ -15,13 +15,13 @@ object State {
     })
   }
 
-  implicit def stateTrivialFunctorInstance[S]: Functor[Currying[State, S]#Type] = Monad.monadTrivialFunctorInstance[Currying[State, S]#Type]
+  implicit def stateTrivialFunctorInstance[S]: Functor[State$1[S]#Type] = Monad.monadTrivialFunctorInstance[State$1[S]#Type]
 
-  implicit def stateTrivialApplicativeInstance[S]: Applicative[Currying[State, S]#Type] = Monad.monadTrivialApplicativeInstance[Currying[State, S]#Type]
+  implicit def stateTrivialApplicativeInstance[S]: Applicative[State$1[S]#Type] = Monad.monadTrivialApplicativeInstance[State$1[S]#Type]
 
-  implicit def stateTrivialMonadInstance[S]: Monad[Currying[State, S]#Type] = new StateTrivialMonadInstance[S]()
+  implicit def stateTrivialMonadInstance[S]: Monad[State$1[S]#Type] = new StateTrivialMonadInstance[S]()
 
-  implicit def stateForNotation[S, A](ma: State[S, A]) = Monad.forNotation[Currying[State, S]#Type, A](ma)
+  implicit def stateForNotation[S, A](ma: State[S, A]) = Monad.forNotation[State$1[S]#Type, A](ma)
 
   def put[S](newState: S): State[S, Unit] = State(s => ((), newState))
 
