@@ -41,6 +41,10 @@ object Monad {
 
   def monadTrivialApplicativeInstance[F[_]: Monad]: Applicative[F] = new MonadTrivialApplicativeInstance()
 
+  implicit final class >>=[F[_]: Monad, A, B](ma: F[A]) { def >>=(famb: A => F[B]): F[B] = Monad[F].compose(ma, famb) }
+
+  implicit final class >>[F[_]: Monad, A, B](ma: F[A]) { def >>(mb: F[B]): F[B] = Monad[F].composeSecond(ma, mb) }
+
   def liftM[F[_]: Monad, A, B](fab: A => B, ma: F[A]): F[B] =
     Monad[F].compose(ma, (a: A) => Monad[F].unit(fab(a)))
 

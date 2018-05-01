@@ -21,4 +21,8 @@ object Either {
   implicit def eitherTrivialMonadInstance[E]: Monad[Either$1[E]#Type] = new EitherTrivialMonadInstance[E]()
 
   implicit def eitherForNotation[E, A](ma: Either[E, A]) = Monad.forNotation[Either$1[E]#Type, A](ma)
+
+  def left[A, B](a: A): Either[A, B] = Left(a)
+
+  def right[A, B](b: B): Either[A, B] = Right(b)
 }
