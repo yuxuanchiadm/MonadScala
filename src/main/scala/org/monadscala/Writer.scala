@@ -1,13 +1,13 @@
 package org.monadscala
 
+import org.monadscala.Typelevel._
+
 import scala.language.implicitConversions
 
 sealed case class Writer[W, A](runWriter: (A, W))
 
 object Writer {
-  type Writer$1[W] = { type Type[A] = Writer[W, A] }
-
-  private final class WriterTrivialMonadInstance[W: Monoid] extends Monad[Writer$1[W]#Type] {
+  private final class WriterTrivialMonadInstance[W: Monoid] extends Monad[Curry2[Writer]# <[W]# <|] {
     override final def unit[A](a: A): Writer[W, A] = Writer((a, Monoid[W].mempty()))
 
     override final def compose[A, B](ma: Writer[W, A], famb: A => Writer[W, B]): Writer[W, B] = ma.runWriter match {
@@ -15,13 +15,13 @@ object Writer {
     }
   }
 
-  implicit def writerTrivialFunctorInstance[W: Monoid]: Functor[Writer$1[W]#Type] = Monad.monadTrivialFunctorInstance[Writer$1[W]#Type]
+  implicit def writerTrivialFunctorInstance[W: Monoid]: Functor[Curry2[Writer]# <[W]# <|] = Monad.monadTrivialFunctorInstance[Curry2[Writer]# <[W]# <|]
 
-  implicit def writerTrivialApplicativeInstance[W: Monoid]: Applicative[Writer$1[W]#Type] = Monad.monadTrivialApplicativeInstance[Writer$1[W]#Type]
+  implicit def writerTrivialApplicativeInstance[W: Monoid]: Applicative[Curry2[Writer]# <[W]# <|] = Monad.monadTrivialApplicativeInstance[Curry2[Writer]# <[W]# <|]
 
-  implicit def writerTrivialMonadInstance[W: Monoid]: Monad[Writer$1[W]#Type] = new WriterTrivialMonadInstance[W]()
+  implicit def writerTrivialMonadInstance[W: Monoid]: Monad[Curry2[Writer]# <[W]# <|] = new WriterTrivialMonadInstance[W]()
 
-  implicit def writerForNotation[W: Monoid, A](ma: Writer[W, A]) = Monad.forNotation[Writer$1[W]#Type, A](ma)
+  implicit def writerForNotation[W: Monoid, A](ma: Writer[W, A]) = Monad.forNotation[Curry2[Writer]# <[W]# <|, A](ma)
 
   def writer[W, A](aw: (A, W)): Writer[W, A] = Writer(aw)
 

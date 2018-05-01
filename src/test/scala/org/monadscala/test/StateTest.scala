@@ -2,6 +2,7 @@ package org.monadscala.test
 
 import org.monadscala._
 import org.monadscala.State._
+import org.monadscala.Typelevel._
 import org.scalatest.FunSpec
 
 class StateTest extends FunSpec {
@@ -12,7 +13,7 @@ class StateTest extends FunSpec {
       }
       def nextNat(natGen: NatGen): (Int, NatGen) = natGen.apply
 
-      val monad: Monad[State$1[NatGen]#Type] = Monad[State$1[NatGen]#Type]
+      val monad: Monad[Curry2[State]# <[NatGen]# <|] = Monad[Curry2[State]# <[NatGen]# <|]
       import monad._
 
       val state0: State[NatGen, Int] = for {

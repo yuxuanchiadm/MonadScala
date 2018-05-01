@@ -3,12 +3,13 @@ package org.monadscala.test
 import org.monadscala._
 import org.monadscala.Option._
 import org.monadscala.Store._
+import org.monadscala.Typelevel._
 import org.scalatest.FunSpec
 
 class StoreTest extends FunSpec {
   describe("Test store comonad") {
     it("Should respect comonad laws") {
-      val comonad: Comonad[Store$1[Int]#Type] = Comonad[Store$1[Int]#Type]
+      val comonad: Comonad[Curry2[Store]# <[Int]# <|] = Comonad[Curry2[Store]# <[Int]# <|]
       import comonad._
 
       val theStore: Store[Int, String] = store((i) => i.toString(), 0)

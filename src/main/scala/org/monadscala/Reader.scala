@@ -1,25 +1,25 @@
 package org.monadscala
 
+import org.monadscala.Typelevel._
+
 import scala.language.implicitConversions
 
 sealed case class Reader[R, A](runReader: R => A)
 
 object Reader {
-  type Reader$1[R] = { type Type[A] = Reader[R, A] }
-
-  private final class ReaderTrivialMonadInstance[R] extends Monad[Reader$1[R]#Type] {
+  private final class ReaderTrivialMonadInstance[R] extends Monad[Curry2[Reader]# <[R]# <|] {
     override final def unit[A](a: A): Reader[R, A] = Reader(r => a)
 
     override final def compose[A, B](ma: Reader[R, A], famb: A => Reader[R, B]): Reader[R, B] = Reader(r => (famb(ma.runReader(r))).runReader(r))
   }
 
-  implicit def readerTrivialFunctorInstance[R]: Functor[Reader$1[R]#Type] = Monad.monadTrivialFunctorInstance[Reader$1[R]#Type]
+  implicit def readerTrivialFunctorInstance[R]: Functor[Curry2[Reader]# <[R]# <|] = Monad.monadTrivialFunctorInstance[Curry2[Reader]# <[R]# <|]
 
-  implicit def readerTrivialApplicativeInstance[R]: Applicative[Reader$1[R]#Type] = Monad.monadTrivialApplicativeInstance[Reader$1[R]#Type]
+  implicit def readerTrivialApplicativeInstance[R]: Applicative[Curry2[Reader]# <[R]# <|] = Monad.monadTrivialApplicativeInstance[Curry2[Reader]# <[R]# <|]
 
-  implicit def readerTrivialMonadInstance[R]: Monad[Reader$1[R]#Type] = new ReaderTrivialMonadInstance[R]()
+  implicit def readerTrivialMonadInstance[R]: Monad[Curry2[Reader]# <[R]# <|] = new ReaderTrivialMonadInstance[R]()
 
-  implicit def readerForNotation[R, A](ma: Reader[R, A]) = Monad.forNotation[Reader$1[R]#Type, A](ma)
+  implicit def readerForNotation[R, A](ma: Reader[R, A]) = Monad.forNotation[Curry2[Reader]# <[R]# <|, A](ma)
 
   def ask[R](): Reader[R, R] = Reader(r => r)
 

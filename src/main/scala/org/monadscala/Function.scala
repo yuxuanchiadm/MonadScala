@@ -1,8 +1,6 @@
 package org.monadscala
 
 object Function {
-  type Function$1[A] = { type Type[B] = Function[A, B] }
-
   private final class FunctionTrivialCategoryInstance extends Category[Function] {
     override final def catid[A](): Function[A, A] = identity
 
