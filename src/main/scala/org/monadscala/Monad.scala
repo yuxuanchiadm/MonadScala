@@ -7,7 +7,7 @@ abstract class Monad[F[_]] {
 
   def compose[A, B](ma: F[A], famb: A => F[B]): F[B]
 
-  final def composeSecond[A, B](fa: F[A], fb: F[B]): F[B] = compose(fa, Function.const(fb))
+  def composeSecond[A, B](fa: F[A], fb: F[B]): F[B] = compose(fa, Function.const(fb))
 }
 
 object Monad {

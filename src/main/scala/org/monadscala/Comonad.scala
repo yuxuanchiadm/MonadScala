@@ -8,6 +8,8 @@ abstract class Comonad[F[_]] {
   def extend[A, B](fwab: F[A] => B, wa: F[A]): F[B]
 
   def duplicate[A](wa: F[A]): F[F[A]] = extend(identity[F[A]], wa)
+
+  def extendSecond[A, B](b: B, wa: F[A]): F[B] = extend(Function.const[B, F[A]](b), wa)
 }
 
 object Comonad {

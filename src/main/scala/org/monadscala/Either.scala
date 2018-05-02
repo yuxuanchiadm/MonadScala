@@ -25,4 +25,9 @@ object Either {
   def left[A, B](a: A): Either[A, B] = Left(a)
 
   def right[A, B](b: B): Either[A, B] = Right(b)
+
+  def either[A, B, C](fac: A => C, fbc: B => C, eab: Either[A, B]): C = eab match {
+    case Left(a) => fac(a)
+    case Right(b) => fbc(b)
+  }
 }
