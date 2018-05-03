@@ -9,10 +9,10 @@ object List {
     override final def compose[A, B](ma: List[A], famb: A => List[B]): List[B] = ma.flatMap(famb)
   }
 
-  private final class ListTrivialMonadPlusInstance extends MonadPlus[List] {
-    override final def mzero[A](): List[A] = Nil
+  private final class ListTrivialAlternativeInstance extends Alternative[List] {
+    override final def empty[A](): List[A] = Nil
 
-    override final def mplus[A](a1: List[A], a2: List[A]): List[A] = a1 ++ a2
+    override final def combine[A](fa1: List[A], fa2: List[A]): List[A] = fa1 ++ fa2
   }
 
   private final class ListTrivialMonoidInstance[A] extends Monoid[List[A]] {
@@ -27,9 +27,7 @@ object List {
 
   implicit def listTrivialMonadInstance: Monad[List] = new ListTrivialMonadInstance()
 
-  implicit def listTrivialAlternativeInstance: Alternative[List] = MonadPlus.monadPlusTrivialAlternativeInstance[List]
-
-  implicit def listTrivialMonadPlusInstance: MonadPlus[List] = new ListTrivialMonadPlusInstance()
+  implicit def listTrivialAlternativeInstance: Alternative[List] = new ListTrivialAlternativeInstance()
 
   implicit def listTrivialMagmaInstance[A]: Magma[List[A]] = Monoid.monoidTrivialMagmaInstance[List[A]]
 

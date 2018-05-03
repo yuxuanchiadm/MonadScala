@@ -16,4 +16,8 @@ abstract class ArrowChoice[G[_, _]: Arrow] {
 
 object ArrowChoice {
   def apply[G[_, _]: ArrowChoice]: ArrowChoice[G] = implicitly[ArrowChoice[G]]
+
+  implicit final class +++[G[_, _]: ArrowChoice, A, B, C, D](gab: G[A, B]) { def +++(gcd: G[C, D]): G[Either[A, C], Either[B, D]] = ArrowChoice[G].splitSum(gab, gcd) }
+
+  implicit final class |||[G[_, _]: ArrowChoice, A, B, C](gac: G[A, C]) { def |||(gbc: G[B, C]): G[Either[A, B], C] = ArrowChoice[G].fanin(gac, gbc) }
 }

@@ -5,12 +5,12 @@ import org.monadscala.List._
 import org.scalatest.FunSpec
 
 class ListTest extends FunSpec {
-  describe("Test list monad plus") {
-    it("Should respect monad plus laws") {
-      val monadPlus: MonadPlus[List] = MonadPlus[List]
+  describe("Test list alternative") {
+    it("Should respect alternative laws") {
+      val monadPlus: Alternative[List] = Alternative[List]
       import monadPlus._
 
-      val list: List[String] = mplus(mplus(List("a", "b"), List("c", "d")), mzero)
+      val list: List[String] = combine(combine(List("a", "b"), List("c", "d")), empty())
       assertResult(4)(list.length)
     }
   }

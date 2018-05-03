@@ -2,33 +2,36 @@ package org.monadscala
 
 import scala.language.higherKinds
 
-abstract class Applicative[F[_]] {
-  def pure[A](a: A): F[A]
+abstract class Applicative[F[_]: Functor] {
+  def functorInstance(): Functor[F] = Functor[F]
 
   def apply[A, B](ffab: F[A => B], fa: F[A]): F[B]
 
-  def applySecond[A, B](fa: F[A], fb: F[B]): F[B] = apply(apply(pure(Function.const(identity(_: B))(_: A)), fa), fb)
+  def applyFirst[A, B](fb: F[B], fa: F[A]): F[B] = apply(Functor[F].fmap(Function.const[B, A], fb), fa)
 
-  def applyFirst[A, B](fa: F[A], fb: F[B]): F[A] = apply(apply(pure(Function.const(identity(_: A))(_: B)), fb), fa)
+  def applySecond[A, B](fa: F[A], fb: F[B]): F[B] = apply(Functor[F].fmap(Function.const[B, A], fb), fa)
 }
 
 object Applicative {
-  private final class ApplicativeTrivialFunctorInstance[F[_]: Applicative] extends Functor[F] {
-    override def fmap[A, B](fab: A => B, fa: F[A]): F[B] = Applicative[F].apply(Applicative[F].pure(fab), fa)
-
-    override def replace[A, B](a: A, fb: F[B]): F[A] = Applicative[F].apply(Applicative[F].pure(Function.const(a)(_: B)), fb)
-  }
-
   def apply[F[_]: Applicative]: Applicative[F] = implicitly[Applicative[F]]
 
-  def applicativeTrivialFunctorInstance[F[_]: Applicative]: Functor[F] = new ApplicativeTrivialFunctorInstance()
+  implicit final class <*>[F[_]: Applicative, A, B](ffab: F[A => B]) { def <*>(fa: F[A]): F[B] = Applicative[F].apply(ffab, fa) }
 
-  def liftA[F[_]: Applicative, A, B](fab: A => B, fa: F[A]): F[B] =
-    Applicative[F].apply(Applicative[F].pure(fab), fa)
+  def liftMA[F[_]: Applicative: Monad, A, B](fab: A => B, ma: F[A]): F[B] =
+    Monad[F].compose(ma, (Monad[F].unit(_: B)).compose(fab))
 
-  def liftA2[F[_]: Applicative, A, B, C](fabc: A => B => C, fa: F[A], fb: F[B]): F[C] =
-    Applicative[F].apply(Applicative[F].apply(Applicative[F].pure(fabc), fa), fb)
+  def liftMA2[F[_]: Applicative: Monad, A, B, C](fabc: A => B => C, ma: F[A], mb: F[B]): F[C] =
+    Applicative[F].apply(Monad[F].compose(ma, (Monad[F].unit(_: B => C)).compose(fabc)), mb)
 
-  def liftA3[F[_]: Applicative, A, B, C, D](fabcd: A => B => C => D, fa: F[A], fb: F[B], fc: F[C]): F[D] =
-    Applicative[F].apply(Applicative[F].apply(Applicative[F].apply(Applicative[F].pure(fabcd), fa), fb), fc)
+  def liftMA3[F[_]: Applicative: Monad, A, B, C, D](fabcd: A => B => C => D, ma: F[A], mb: F[B], mc: F[C]): F[D] =
+    Applicative[F].apply(Applicative[F].apply(Monad[F].compose(ma, (Monad[F].unit(_: B => C => D)).compose(fabcd)), mb), mc)
+
+  def liftWA[F[_]: Applicative: Comonad, A, B](fab: A => B, wa: F[A]): F[B] =
+    Comonad[F].extend(fab.compose(Comonad[F].extract[A]), wa)
+
+  def liftWA2[F[_]: Applicative: Comonad, A, B, C](fabc: A => B => C, wa: F[A], wb: F[B]): F[C] =
+    Applicative[F].apply(Comonad[F].extend(fabc.compose(Comonad[F].extract[A]), wa), wb)
+
+  def liftWA3[F[_]: Applicative: Comonad, A, B, C, D](fabcd: A => B => C => D, wa: F[A], wb: F[B], wc: F[C]): F[D] =
+    Applicative[F].apply(Applicative[F].apply(Comonad[F].extend(fabcd.compose(Comonad[F].extract[A]), wa), wb), wc)
 }

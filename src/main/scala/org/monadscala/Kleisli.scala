@@ -21,13 +21,13 @@ object Kleisli {
       Kleisli({ case (a, c) => Monad[M].compose(gab.runKleisli(a), (b: B) => Monad[M].compose(gcd.runKleisli(c), (d: D) => Monad[M].unit((b, d)))) })
   }
 
-  private final class KleisliTrivialArrowZeroInstance[M[_]: MonadPlus] extends ArrowZero[Curry3[Kleisli]# <[M]# <|]()(kleisliTrivialArrowInstance(MonadPlus[M].monadInstance())) {
-    override final def zeroArrow[A, B](): Kleisli[M, A, B] = Kleisli(a => MonadPlus[M].mzero())
+  private final class KleisliTrivialArrowZeroInstance[M[_]: Alternative: Monad] extends ArrowZero[Curry3[Kleisli]# <[M]# <|]{
+    override final def zeroArrow[A, B](): Kleisli[M, A, B] = Kleisli(a => Alternative[M].empty())
   }
 
-  private final class KleisliTrivialArrowPlusInstance[M[_]: MonadPlus] extends ArrowPlus[Curry3[Kleisli]# <[M]# <|] {
+  private final class KleisliTrivialArrowPlusInstance[M[_]: Alternative: Monad] extends ArrowPlus[Curry3[Kleisli]# <[M]# <|] {
     override final def plusArrow[A, B](gab1: Kleisli[M, A, B], gab2: Kleisli[M, A, B]): Kleisli[M, A, B] =
-      Kleisli(a => MonadPlus[M].mplus(gab1.runKleisli(a), gab2.runKleisli(a)))
+      Kleisli(a => Alternative[M].combine(gab1.runKleisli(a), gab2.runKleisli(a)))
   }
 
   private final class KleisliTrivialArrowChoiceInstance[M[_]: Monad] extends ArrowChoice[Curry3[Kleisli]# <[M]# <|] {
@@ -46,9 +46,9 @@ object Kleisli {
 
   implicit def kleisliTrivialArrowInstance[M[_]: Monad]: Arrow[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowInstance[M]()
 
-  implicit def kleisliTrivialArrowZeroInstance[M[_]: MonadPlus]: ArrowZero[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowZeroInstance[M]()
+  implicit def kleisliTrivialArrowZeroInstance[M[_]: Alternative: Monad]: ArrowZero[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowZeroInstance[M]()
 
-  implicit def kleisliTrivialArrowPlusInstance[M[_]: MonadPlus]: ArrowPlus[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowPlusInstance[M]()
+  implicit def kleisliTrivialArrowPlusInstance[M[_]: Alternative: Monad]: ArrowPlus[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowPlusInstance[M]()
 
   implicit def kleisliTrivialArrowChoiceInstance[M[_]: Monad]: ArrowChoice[Curry3[Kleisli]# <[M]# <|] = new KleisliTrivialArrowChoiceInstance[M]()
 

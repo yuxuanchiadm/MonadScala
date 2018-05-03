@@ -9,10 +9,10 @@ object Option {
     override final def compose[A, B](ma: Option[A], famb: A => Option[B]): Option[B] = ma.flatMap(famb)
   }
 
-  private final class OptionTrivialMonadPlusInstance extends MonadPlus[Option] {
-    override final def mzero[A](): Option[A] = None
+  private final class OptionTrivialAlternativeInstance extends Alternative[Option] {
+    override final def empty[A](): Option[A] = None
 
-    override final def mplus[A](a1: Option[A], a2: Option[A]): Option[A] = a1.orElse(a2)
+    override final def combine[A](fa1: Option[A], fa2: Option[A]): Option[A] = fa1.orElse(fa2)
   }
 
   private final class OptionTrivialMonoidInstance[A: Semigroup] extends Monoid[Option[A]] {
@@ -40,9 +40,7 @@ object Option {
 
   implicit def optionTrivialMonadInstance: Monad[Option] = new OptionTrivialMonadInstance()
 
-  implicit def optionTrivialAlternativeInstance: Alternative[Option] = MonadPlus.monadPlusTrivialAlternativeInstance[Option]
-
-  implicit def optionTrivialMonadPlusInstance: MonadPlus[Option] = new OptionTrivialMonadPlusInstance()
+  implicit def optionTrivialAlternativeInstance: Alternative[Option] = new OptionTrivialAlternativeInstance()
 
   implicit def optionTrivialMagmaInstance[A: Semigroup]: Magma[Option[A]] = Monoid.monoidTrivialMagmaInstance[Option[A]]
 

@@ -3,6 +3,7 @@ package org.monadscala
 import org.monadscala.Typelevel._
 
 import scala.language.higherKinds
+import scala.language.implicitConversions
 
 sealed case class Cokleisli[W[_], A, B](runCokleisli: W[A] => B)
 
@@ -62,4 +63,6 @@ object Cokleisli {
   implicit def cokleisliTrivialArrowChoiceInstance[W[_]: Comonad]: ArrowChoice[Curry3[Cokleisli]# <[W]# <|] = new CokleisliTrivialArrowChoiceInstance[W]()
 
   implicit def cokleisliTrivialArrowApplyInstance[W[_]: Comonad]: ArrowApply[Curry3[Cokleisli]# <[W]# <|] = new CokleisliTrivialArrowApplyInstance[W]()
+
+  implicit def cokleisliForNotation[W[_], A, B](ma: Cokleisli[W, A, B]) = Monad.forNotation[Curry3[Cokleisli]# <[W]# <[A]# <|, B](ma)
 }

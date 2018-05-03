@@ -18,4 +18,18 @@ abstract class Arrow[G[_, _]: Category] {
 
 object Arrow {
   def apply[G[_, _]: Arrow]: Arrow[G] = implicitly[Arrow[G]]
+
+  implicit final class ***[G[_, _]: Arrow, A, B, C, D](gab: G[A, B]) { def ***(gcd: G[C, D]): G[(A, C), (B, D)] = Arrow[G].splitProduct(gab, gcd) }
+
+  implicit final class &&&[G[_, _]: Arrow, A, B, C](gab: G[A, B]) { def &&&(gac: G[A, C]): G[A, (B, C)] = Arrow[G].fanout(gab, gac) }
+
+  def returnA[G[_, _]: Arrow, A](): G[A, A] = Arrow[G].arr(identity)
+
+  implicit final class ^>>[G[_, _]: Arrow, A, B, C](fab: A => B) { def ^>>(gbc: G[B, C]): G[A, C] = Arrow[G].categoryInstance().catmor(gbc, Arrow[G].arr(fab)) }
+
+  implicit final class >>^[G[_, _]: Arrow, A, B, C](gab: G[A, B]) { def >>^(fbc: B => C): G[A, C] = Arrow[G].categoryInstance().catmor(Arrow[G].arr(fbc), gab) }
+
+  implicit final class <<^[G[_, _]: Arrow, A, B, C](gbc: G[B, C]) { def <<^(fab: A => B): G[A, C] = Arrow[G].categoryInstance().catmor(gbc, Arrow[G].arr(fab)) }
+
+  implicit final class ^<<[G[_, _]: Arrow, A, B, C](fbc: B => C) { def ^<<(gab: G[A, B]): G[A, C] = Arrow[G].categoryInstance().catmor(Arrow[G].arr(fbc), gab) }
 }

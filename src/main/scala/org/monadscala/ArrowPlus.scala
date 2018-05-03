@@ -10,4 +10,6 @@ abstract class ArrowPlus[G[_, _]: ArrowZero] {
 
 object ArrowPlus {
   def apply[G[_, _]: ArrowPlus]: ArrowPlus[G] = implicitly[ArrowPlus[G]]
+
+  implicit final class <+>[G[_, _]: ArrowPlus, A, B](gab1: G[A, B]) { def <+>(gab2: G[A, B]): G[A, B] = ArrowPlus[G].plusArrow(gab1, gab2) }
 }
