@@ -15,7 +15,7 @@ abstract class Monad[F[_]] {
 }
 
 object Monad {
-  private final class MonadForNotation[F[_]: Monad, A](ma: F[A]) extends ForNotation[F, A] {
+  private final class MonadForNotation[F[_]: Monad, A](ma: F[A]) extends ForNotation[F, F, A] {
     override def flatMap[B](famb: A => F[B]): F[B] = Monad[F].compose(ma, famb)
 
     override def map[B](fab: A => B): F[B] = Monad[F].compose(ma, (a: A) => Monad[F].unit(fab(a)))
@@ -37,7 +37,7 @@ object Monad {
 
   def apply[F[_]: Monad]: Monad[F] = implicitly[Monad[F]]
 
-  def forNotation[F[_]: Monad, A](ma: F[A]): ForNotation[F, A] = new MonadForNotation(ma)
+  def forNotation[F[_]: Monad, A](ma: F[A]): ForNotation[F, F, A] = new MonadForNotation(ma)
 
   def monadTrivialFunctorInstance[F[_]: Monad]: Functor[F] = new MonadTrivialFunctorInstance()
 

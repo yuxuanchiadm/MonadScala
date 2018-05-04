@@ -37,7 +37,9 @@ object Typelevel {
     }
   }
 
+  type Id[A] = A
+
   type Not[A] = A => Nothing
 
-  type Union[A, B] = { type Apply[C] = Not[Not[C]] <:< Not[Not[A] with Not[B]] }
+  type Union[A, B] = { type Ev[C] = Not[Not[C]] <:< Not[Not[A] with Not[B]] }
 }
