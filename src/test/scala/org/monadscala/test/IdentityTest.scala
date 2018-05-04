@@ -1,7 +1,8 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.Identity._
+import org.monadscala.instance._
+import org.monadscala.instance.Identity._
+import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class IdentityTest extends FunSpec {

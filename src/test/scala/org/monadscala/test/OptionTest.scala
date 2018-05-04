@@ -1,7 +1,7 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.Option._
+import org.monadscala.instance.Option._
+import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class OptionTest extends FunSpec {

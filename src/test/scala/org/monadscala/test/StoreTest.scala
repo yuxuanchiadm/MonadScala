@@ -1,9 +1,10 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.Option._
-import org.monadscala.Store._
 import org.monadscala.Typelevel._
+import org.monadscala.instance._
+import org.monadscala.instance.Option._
+import org.monadscala.instance.Store._
+import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class StoreTest extends FunSpec {

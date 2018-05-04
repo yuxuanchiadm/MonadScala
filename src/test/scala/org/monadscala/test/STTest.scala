@@ -1,7 +1,7 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.ST._
+import org.monadscala.instance._
+import org.monadscala.instance.ST._
 import org.scalatest.FunSpec
 
 class STTest extends FunSpec {

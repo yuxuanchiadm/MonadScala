@@ -1,9 +1,9 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.Either._
-import org.monadscala.Monad._
 import org.monadscala.Typelevel._
+import org.monadscala.instance.Either._
+import org.monadscala.typeclass._
+import org.monadscala.typeclass.Monad._
 import org.scalatest.FunSpec
 
 class EitherTest extends FunSpec {

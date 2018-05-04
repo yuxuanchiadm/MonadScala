@@ -1,8 +1,9 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.State._
 import org.monadscala.Typelevel._
+import org.monadscala.instance._
+import org.monadscala.instance.State._
+import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class StateTest extends FunSpec {

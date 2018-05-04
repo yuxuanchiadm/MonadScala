@@ -1,7 +1,7 @@
 package org.monadscala.test
 
-import org.monadscala._
-import org.monadscala.List._
+import org.monadscala.instance.List._
+import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class ListTest extends FunSpec {
