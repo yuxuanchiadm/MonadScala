@@ -33,6 +33,14 @@ object Comonad {
 
   def comonadTrivialApplicativeInstance[F[_]: Comonad]: Applicative[F] = new ComonadTrivialApplicativeInstance()
 
+  implicit final class =>>[F[_]: Comonad, A, B](wa: F[A]) { def >>=(fwab: F[A] => B): F[B] = Comonad[F].extend(fwab, wa) }
+
+  implicit final class <<=[F[_]: Comonad, A, B](fwab: F[A] => B) { def =<<(wa: F[A]): F[B] = Comonad[F].extend(fwab, wa) }
+
+  implicit final class =>=[F[_]: Comonad, A, B, C](fwab: F[A] => B) { def >=>(fwbc: F[B] => C): F[A] => C = fwbc.compose(Comonad[F].extend(fwab, _)) }
+
+  implicit final class =<=[F[_]: Comonad, A, B, C](fwbc: F[B] => C) { def <=<(fwab: F[A] => B): F[A] => C = fwbc.compose(Comonad[F].extend(fwab, _)) }
+
   def liftW[F[_]: Comonad, A, B](fab: A => B, wa: F[A]): F[B] =
     Comonad[F].extend((fab(_: A)).compose(Comonad[F].extract[A]), wa)
 

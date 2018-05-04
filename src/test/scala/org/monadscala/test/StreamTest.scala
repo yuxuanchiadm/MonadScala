@@ -6,6 +6,15 @@ import org.monadscala.Typelevel._
 import org.scalatest.FunSpec
 
 class StreamTest extends FunSpec {
+  describe("Test stream functor") {
+    it("Should respect functor laws") {
+      val functor: Functor[Stream] = Functor[Stream]
+      import functor._
+
+      def natStream(i: Int): Stream[Int] = Stream(i, () => natStream(i + 1))
+      assertResult("2")((fmap((_: Int).toString(), natStream(0))).runStream._2().runStream._2().runStream._1)
+    }
+  }
   describe("Test stream comonad") {
     it("Should respect comonad laws") {
       val comonad: Comonad[Stream] = Comonad[Stream]
