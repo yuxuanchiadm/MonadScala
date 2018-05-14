@@ -1,4 +1,4 @@
-package org.monadscala.test
+package org.monadscala
 
 import scala.language.higherKinds
 

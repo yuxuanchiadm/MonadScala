@@ -1,4 +1,4 @@
-package org.monadscala.test
+package org.monadscala.instance
 
 import org.monadscala.Typelevel._
 import org.monadscala.instance._

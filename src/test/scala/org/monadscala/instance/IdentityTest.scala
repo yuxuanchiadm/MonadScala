@@ -1,4 +1,4 @@
-package org.monadscala.test
+package org.monadscala.instance
 
 import org.monadscala.instance._
 import org.monadscala.instance.Identity._

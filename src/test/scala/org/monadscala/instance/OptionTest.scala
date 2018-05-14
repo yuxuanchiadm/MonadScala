@@ -1,4 +1,4 @@
-package org.monadscala.test
+package org.monadscala.instance
 
 import org.monadscala.instance.Option._
 import org.monadscala.typeclass._
