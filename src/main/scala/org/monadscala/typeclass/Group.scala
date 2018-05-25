@@ -22,7 +22,7 @@ object Group {
 
     override def mappend(a1: A, a2: A): A = Group[A].append(a1, a2)
 
-    override def mconcat(t: Traversable[A]): A = (Group[A].identity() /: t)(Group[A].append)
+    override def mconcat(t: Traversable[A]): A = t.foldLeft(Group[A].identity())(Group[A].append)
   }
 
   def apply[A: Group]: Group[A] = implicitly[Group[A]]

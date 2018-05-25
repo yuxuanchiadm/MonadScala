@@ -5,7 +5,7 @@ abstract class Monoid[A] {
 
   def mappend(a1: A, a2: A): A
 
-  def mconcat(t: Traversable[A]): A = (mempty() /: t)(mappend)
+  def mconcat(t: Traversable[A]): A = t.foldLeft(mempty())(mappend)
 }
 
 object Monoid {
