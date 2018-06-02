@@ -6,7 +6,7 @@ import org.monadscala.typeclass._
 import org.scalatest.FunSpec
 
 class IdentityTest extends FunSpec {
-  describe("Test either comonad") {
+  describe("Test identity comonad") {
     it("Should respect comonad laws") {
       val comonad: Comonad[Identity] = Comonad[Identity]
       import comonad._
